@@ -1,0 +1,16 @@
+{
+  "name": "opinatii-photography",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/database.test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.119.2"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.6.0",
+    "esbuild": "0.28.2"
+  }
+}
