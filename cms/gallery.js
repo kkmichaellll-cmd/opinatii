@@ -1,3 +1,4 @@
+import { icon } from "./icons.js";
 import { rows, images, el, watchPage } from "./common.js";
 const menu = document.querySelector("#mobile-menu"),
   toggle = document.querySelector(".menu-toggle");
@@ -106,7 +107,7 @@ async function render() {
     ? el(
         "div",
         { class: "collection-caption" },
-        el("a", { href: "/gallery" }, "← All collections"),
+        el("a", { href: "/gallery" }, icon("left"), " All collections"),
         el("h2", {}, cat.name),
       )
     : el("h2", { class: "collection-caption" }, "Collections");

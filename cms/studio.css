@@ -384,9 +384,6 @@ dialog::backdrop {
   .studio-main {
     padding: 30px 18px 80px;
   }
-  .studio nav svg {
-    display: none;
-  }
   .filters > label {
     width: 100%;
   }
