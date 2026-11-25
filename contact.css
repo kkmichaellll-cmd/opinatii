@@ -1,0 +1,35 @@
+.contact-page {
+  border-block-start: 1px solid var(--line);
+}
+.contact-layout {
+  max-width: 1520px;
+  margin-inline: auto;
+  padding: clamp(38px, 5vw, 84px) var(--space) clamp(60px, 8vw, 120px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(32px, 7vw, 110px);
+}
+.contact-copy h1 {
+  font-size: clamp(64px, 6.6vw, 108px);
+  line-height: .99;
+  margin: 20px 0;
+}
+.contact-copy h1 span { display: block; color: #606953; }
+.contact-intro { max-width: 40ch; font-size: clamp(16px, 1.4vw, 22px); color: var(--muted); }
+.contact-methods { margin: clamp(26px, 4vw, 54px) 0 20px; border-top: 1px solid var(--line); }
+.contact-method {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line);
+}
+.contact-method small { display: block; font-size: 12px; color: var(--muted); }
+.contact-method strong { font-size: clamp(17px, 1.6vw, 25px); font-weight: 500; overflow-wrap: anywhere; }
+.contact-method svg { flex: none; width: 36px; height: 36px; padding: 8px; border: 1px solid var(--line); border-radius: 50%; }
+.contact-method:hover svg, .contact-method:focus-visible svg { background: var(--sage); }
+.contact-prices { font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+.contact-photo img { aspect-ratio: 4/5; object-fit: cover; }
+@media (max-width: 760px) {
+  .contact-layout { grid-template-columns: minmax(0, 1fr); }
+  .contact-copy h1 { font-size: clamp(52px, 11vw, 76px); }
+  .contact-photo img { aspect-ratio: 5/4; object-position: 50% 35%; }
+}

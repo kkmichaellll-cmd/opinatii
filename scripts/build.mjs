@@ -19,6 +19,8 @@ for (const name of [
   "index.html",
   "about.html",
   "about.css",
+  "contact.html",
+  "contact.css",
   "about.js",
   "app.js",
   "style.css",
