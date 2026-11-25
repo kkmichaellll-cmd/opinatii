@@ -17,6 +17,9 @@ await mkdir("dist/cms", { recursive: true });
 for (const name of [
   "assets",
   "index.html",
+  "about.html",
+  "about.css",
+  "about.js",
   "app.js",
   "style.css",
   "pricing.html",
