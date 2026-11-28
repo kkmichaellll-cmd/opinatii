@@ -1,3 +1,4 @@
+import { heroCategory, photoLink } from "./gallery-options.js";
 import { icon } from "./icons.js";
 import { rows, images, el, watchPage } from "./common.js";
 const menu = document.querySelector("#mobile-menu"),
@@ -89,7 +90,9 @@ async function render() {
       loading: "lazy",
       decoding: "async",
     });
-    if (cat)
+    const href = cat && photoLink(p.link_url);
+    if (href) grid.append(el("a", { class: "photo-tile", href }, img));
+    else if (cat)
       grid.append(
         el("button", { class: "photo-tile", onclick: () => showPhoto(p) }, img),
       );
@@ -120,8 +123,8 @@ async function render() {
 watchPage(
   async () => {
     [categories, photos] = await Promise.all([
-      rows("op_categories", (q) => q, "created_at"),
-      rows("op_photos", (q) => q.eq("published", true)),
+      rows("op_categories", (q) => q.neq("id", heroCategory), "created_at"),
+      rows("op_photos", (q) => q.eq("published", true).neq("category_id", heroCategory)),
     ]);
     await render();
   },

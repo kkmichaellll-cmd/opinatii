@@ -8,6 +8,7 @@ The recovered homepage, the existing pricing page, a public gallery at `/gallery
 2. In Authentication settings, enable the Email provider, turn **Allow new users to sign up** off, and disable anonymous sign-ins. Save. Keep the Auth Site URL set to the HTTPS address of your website.
 3. In the SQL Editor, run **supabase/01-schema.sql** once. It creates the tables, database permissions, private administrator allowlist, private `opinatii-gallery` bucket and object policies.
 4. Run **supabase/02-import.sql**. It imports the recovered collections and 12 existing website photographs under Weddings, Events, Studio & Portraits and Editorial. The transaction records a completed import. Re-running it preserves subsequent edits and deletions.
+   Then run **supabase/04-hero-gallery-links.sql** to enable the homepage carousel and optional gallery links. Existing installations only need this new script.
 5. Under the project's Data API settings, enable the API and expose the `public` schema. Keep `opinatii_private` outside the exposed schemas. The SQL grants access to the appropriate tables and functions. Use the default API row limit of 1,000 or a limit of at least 100.
 6. Open the project's Connect dialog or Project Settings → API Keys. Copy your project URL and **publishable** key. The build accepts an HTTPS project URL and an `sb_publishable_` key. The browser uses these public values. The application requires no service-role key, secret API key, JWT signing secret or database password.
 

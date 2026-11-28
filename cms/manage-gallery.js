@@ -1,3 +1,4 @@
+import { heroCategory, photoLink } from "./gallery-options.js";
 import { db, el, rows, images } from "./common.js";
 import {
   btn,
@@ -14,6 +15,7 @@ let category = "";
 export async function gallery({ refresh, mutate }) {
   const cats = await rows("op_categories", (q) => q, "created_at");
   if (!cats.some((c) => c.id === category)) category = cats[0]?.id || "";
+  const hero = category === heroCategory;
   const current = cats.find((c) => c.id === category);
   const photos = current
     ? await rows("op_photos", (q) => q.eq("category_id", category))
@@ -24,7 +26,7 @@ export async function gallery({ refresh, mutate }) {
     selector = el(
       "select",
       {},
-      ...cats.map((c) => option(c.id, c.name, c.id === category)),
+      ...cats.map((c) => option(c.id, c.id === heroCategory ? "Homepage hero carousel" : c.name, c.id === category)),
     );
   const queue = [],
     previews = el("div", { class: "pending" });
@@ -109,8 +111,8 @@ export async function gallery({ refresh, mutate }) {
     el(
       "div",
       { class: "filters" },
-      field("Gallery category", selector),
-      tools(
+      field("Manage photographs", selector),
+      hero ? el("p", { class: "muted" }, "Published slides appear on the homepage in this order.") : tools(
         btn("Rename", () => categoryForm(true), "edit"),
         btn("Delete category", removeCategory, "trash"),
       ),
@@ -291,7 +293,7 @@ export async function gallery({ refresh, mutate }) {
     const dest = el(
       "select",
       {},
-      ...cats.filter((c) => c.id !== category).map((c) => option(c.id, c.name)),
+      ...cats.filter((c) => c.id !== category && c.id !== heroCategory).map((c) => option(c.id, c.name)),
     );
     formDialog(
       "Move photograph",
@@ -310,6 +312,16 @@ export async function gallery({ refresh, mutate }) {
         ),
       "Move",
     );
+  }
+  function editLink(p) {
+    const input = textInput(p.link_url || "", { type: "url", maxlength: 2048, placeholder: "https://example.com" });
+    formDialog("Photograph link", [field("Destination URL (optional)", input),
+      el("p", { class: "muted" }, "Leave blank to open the photograph in the gallery viewer.")], async () => {
+      const value = input.value.trim();
+      const url = photoLink(value);
+      if (value && (!url || url.length > 2048)) throw Error("Enter a full http or https website address without login details.");
+      await mutate(() => db.from("op_photos").update({ link_url: url }).eq("id", p.id).select("id").single(), "Photograph link saved.");
+    });
   }
   const all = el("input", {
     type: "checkbox",
@@ -373,7 +385,7 @@ export async function gallery({ refresh, mutate }) {
         ),
         i === photos.length - 1,
       ],
-      ["Move to category", "move", () => move(p), cats.length < 2],
+      ["Move to category", "move", () => move(p), !cats.some(c => c.id !== category && c.id !== heroCategory)],
       [
         "Set as cover",
         "star",
@@ -399,6 +411,7 @@ export async function gallery({ refresh, mutate }) {
       ],
       ["Delete photograph", "trash", () => remove([p.id]), false],
     ]) {
+      if (hero && (symbol === "move" || symbol === "star")) continue;
       const b = btn(label, fn, symbol, "", true);
       b.disabled = disabled;
       controls.append(b);
@@ -419,6 +432,7 @@ export async function gallery({ refresh, mutate }) {
               (p.cover ? " · Category cover" : ""),
           ),
           controls,
+          ...(hero ? [] : [btn(p.link_url ? "Edit link" : "Add link", () => editLink(p), "edit")]),
           btn(
             p.published ? "Unpublish" : "Publish",
             act(

@@ -36,6 +36,7 @@ await build({
   entryPoints: [
     "cms/admin.js",
     "cms/gallery.js",
+    "cms/hero.js",
     "cms/prices.js",
     "cms/webp-encoder.js",
   ],

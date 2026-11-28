@@ -41,6 +41,14 @@ test("import, authorization, publication, ordering, storage lifecycle and revoca
       );
     assert.equal((await q("select * from op_packages")).length, 18);
     assert.equal((await q("select * from op_photos")).length, 12);
+    await sql("04-hero-gallery-links.sql");
+    const hero = "f36e184c-5c9c-4a1e-a48d-fef40cde801e";
+    const slides = await q("select * from op_photos where category_id=$1 order by position", [hero]);
+    assert.deepEqual(slides.map(s => s.original), ["love", "bride", "couple", "wedding", "wedding", "footer-wedding-0", "kiss"]);
+    await q("delete from op_photos where id=$1", [slides[0].id]);
+    await sql("04-hero-gallery-links.sql");
+    assert.equal((await q("select id from op_photos where category_id=$1", [hero])).length, 6);
+    await assert.rejects(q("update op_photos set link_url='javascript:alert(1)' where id=$1", [slides[1].id]));
     async function role(name, sub = "") {
       await pg.exec("reset role;set role " + name);
       await q("select set_config('request.jwt.claim.sub',$1,false)", [sub]);
@@ -87,6 +95,7 @@ test("import, authorization, publication, ordering, storage lifecycle and revoca
     );
     await role("authenticated", admin);
     await q("update op_photos set published=true where id=$1", [photo]);
+    await q("update op_photos set link_url='https://example.com' where id=$1", [photo]);
     await q("select op_cover($1)", [photo]);
     await role("anon");
     assert.equal((await q("select * from storage.objects")).length, 1);
