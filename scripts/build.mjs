@@ -33,12 +33,26 @@ for (const name of [
 ])
   await cp(name, "dist/" + name, { recursive: true });
 await build({
-  entryPoints: ["cms/admin.js", "cms/gallery.js", "cms/prices.js"],
+  entryPoints: [
+    "cms/admin.js",
+    "cms/gallery.js",
+    "cms/prices.js",
+    "cms/webp-encoder.js",
+  ],
   bundle: true,
   minify: true,
   outdir: "dist/cms",
+  loader: { ".wasm": "file" },
   target: "es2022",
   format: "esm",
   define: { OP_URL: JSON.stringify(url.origin), OP_KEY: JSON.stringify(key) },
 });
+await cp(
+  "node_modules/@jsquash/webp/LICENSE",
+  "dist/cms/webp-encoder-LICENSE.txt",
+);
+await cp(
+  "node_modules/@jsquash/webp/codec/LICENSE.codec.md",
+  "dist/cms/libwebp-LICENSE.txt",
+);
 await writeFile("dist/robots.txt", "User-agent: *\nDisallow: /admin\n");

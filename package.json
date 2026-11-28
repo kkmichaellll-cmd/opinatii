@@ -4,9 +4,10 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/database.test.mjs"
+    "test": "node --test"
   },
   "dependencies": {
+    "@jsquash/webp": "1.5.0",
     "@supabase/supabase-js": "2.119.2"
   },
   "devDependencies": {

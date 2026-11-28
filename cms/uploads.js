@@ -1,43 +1,7 @@
 import { db, bucket, check } from "./common.js";
-export async function optimize(file) {
-  if (
-    !["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)
-  )
-    throw Error("Choose a JPEG, PNG, WebP or AVIF photograph.");
-  if (file.size > 40 * 1024 * 1024)
-    throw Error("Each original must be 40 MB or smaller.");
-  const image = await createImageBitmap(file, {
-    imageOrientation: "from-image",
-  });
-  async function encode(edge, quality) {
-    const ratio = Math.min(1, edge / Math.max(image.width, image.height)),
-      c = document.createElement("canvas");
-    c.width = Math.max(1, Math.round(image.width * ratio));
-    c.height = Math.max(1, Math.round(image.height * ratio));
-    const ctx = c.getContext("2d");
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(image, 0, 0, c.width, c.height);
-    try {
-      return await new Promise((ok, fail) =>
-        c.toBlob(
-          (b) =>
-            b?.type === "image/webp"
-              ? ok(b)
-              : fail(Error("WebP encoding is unavailable in this browser.")),
-          "image/webp",
-          quality,
-        ),
-      );
-    } finally {
-      c.width = c.height = 1;
-    }
-  }
-  try {
-    return [await encode(800, 0.83), await encode(2560, 0.89)];
-  } finally {
-    image.close();
-  }
-}
+import { optimize } from "./optimize-photo.js";
+export { optimize };
+
 async function upload(path, blob, progress) {
   const { session } = check(await db.auth.getSession());
   if (!session) throw Error("Your session ended. Sign in again.");
